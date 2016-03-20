@@ -7,13 +7,13 @@ import (
 
 type User struct {
 	ID       bson.ObjectId `bson:"_id,omitempty"`
-	Email    string        `json: "email"`
-	Password string        `json: "password"`
-	Username string        `json: "username"`
+	Email    string        `json: "email" bson: "email"`
+	Password string        `json: "password" bson: "password"`
+	Username string        `json: "username" bson: "username"`
 }
 
-func NewUser(email string, password string) (user *User, err error) {
-	user = &User{Email: email, Password: password}
+func NewUser(email string, password string, username string) (user *User, err error) {
+	user = &User{Email: email, Password: password, Username: username}
 	return
 }
 
