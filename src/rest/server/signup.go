@@ -17,13 +17,17 @@ func SignupPost(w http.ResponseWriter, r *http.Request) {
 
 	var res interface{}
 
-	if user, err := proto.NewUser(signupData.Email, signupData.Password, signupData.Username); err != nil {
-		res = proto.NewError("NewUser err")
+	if _, err := proto.GetUser(signupData.Email); err == nil {
+		res = proto.NewError("User Already Exist")
 	} else {
-		if err = user.SignUp(); err != nil {
-			res = proto.NewError("User SignUp err")
+		if user, err := proto.NewUser(signupData.Email, signupData.Password, signupData.Username); err != nil {
+			res = proto.NewError("NewUser err")
 		} else {
-			res, _ = proto.NewResult("true", bson.M{"_id": user.ID})
+			if err = user.SignUp(); err != nil {
+				res = proto.NewError("User SignUp err")
+			} else {
+				res, _ = proto.NewResult("true", bson.M{"_id": user.ID})
+			}
 		}
 	}
 	var js []byte
