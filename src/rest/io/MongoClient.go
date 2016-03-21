@@ -2,6 +2,7 @@ package io
 
 import (
 	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type MongoClient struct {
@@ -25,4 +26,9 @@ func (mc *MongoClient) Close() {
 func (mc *MongoClient) Insert(collection string, data interface{}) error {
 	//data must be an address
 	return mc.Session.DB(mc.Db).C(collection).Insert(data)
+}
+
+func (mc *MongoClient) GetOne(collection string, query bson.M, result interface{}) error {
+	//result must be an address
+	return mc.Session.DB(mc.Db).C(collection).Find(query).One(result)
 }

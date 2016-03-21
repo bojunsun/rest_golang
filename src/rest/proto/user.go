@@ -1,6 +1,7 @@
 package proto
 
 import (
+	"errors"
 	"gopkg.in/mgo.v2/bson"
 	"rest/io"
 )
@@ -22,5 +23,23 @@ func (user *User) SignUp() (err error) {
 	mc := io.NewMongoClient()
 	defer mc.Close()
 	mc.Insert("users", user)
+	return
+}
+
+func GetUser(email string) (user *User, err error) {
+	mc := io.NewMongoClient()
+	defer mc.Close()
+	user = &User{}
+	if err = mc.GetOne("users", bson.M{"email": email}, user); err != nil {
+		err = errors.New("User not found")
+	}
+	return
+}
+
+func (user *User) LogIn(password string) (err error) {
+	if user.Password != password {
+		err = errors.New("Wrong password.")
+		return
+	}
 	return
 }
