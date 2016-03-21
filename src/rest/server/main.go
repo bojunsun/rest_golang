@@ -13,6 +13,16 @@ func generalSession() (name string) {
 	return
 }
 
+func checkLogin(r *http.Request) bool {
+	session, _ := store.Get(r, generalSession())
+	if session.Values["login"] == nil || session.Values["login"].(bool) == false {
+		return false
+	} else {
+		return true
+	}
+
+}
+
 func main() {
 	router := mux.NewRouter()
 

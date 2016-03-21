@@ -53,6 +53,7 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 		res = proto.NewError("User Login err")
 	} else {
 		session, _ := store.Get(r, generalSession())
+		//store login(true/flase) and email in session
 		session.Values["login"] = true
 		session.Values["email"] = user.Email
 		session.Save(r, w)
@@ -63,4 +64,5 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	js, _ = json.Marshal(res)
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
+
 }
