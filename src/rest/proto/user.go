@@ -1,7 +1,9 @@
 package proto
 
 import (
+	"crypto/md5"
 	"errors"
+	"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"rest/io"
 )
@@ -13,8 +15,12 @@ type User struct {
 	Username string        `json: "username" bson: "username"`
 }
 
+func md5Encode(password string) string {
+	return fmt.Sprintf("%x", md5.Sum([]byte(password)))
+}
+
 func NewUser(email string, password string, username string) (user *User, err error) {
-	user = &User{Email: email, Password: password, Username: username}
+	user = &User{Email: email, Password: md5Encode(password), Username: username}
 	return
 }
 
@@ -37,7 +43,7 @@ func GetUser(email string) (user *User, err error) {
 }
 
 func (user *User) LogIn(password string) (err error) {
-	if user.Password != password {
+	if user.Password != md5Encode(password) {
 		err = errors.New("Wrong password.")
 		return
 	}

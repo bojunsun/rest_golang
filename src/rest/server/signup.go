@@ -23,7 +23,7 @@ func SignupPost(w http.ResponseWriter, r *http.Request) {
 		if err = user.SignUp(); err != nil {
 			res = proto.NewError("User SignUp err")
 		} else {
-			res, _ = proto.NewResult("true", *user)
+			res, _ = proto.NewResult("true", bson.M{"_id": user.ID})
 		}
 	}
 	var js []byte
