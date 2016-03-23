@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	//"fmt"
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"rest/proto"
@@ -65,4 +66,40 @@ func LoginPost(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(js)
 
+}
+
+func Logout(w http.ResponseWriter, r *http.Request) {
+	var res interface{}
+	if checkLogin(r) {
+		session, _ := store.Get(r, generalSession())
+		session.Values["login"] = false
+		session.Save(r, w)
+		res, _ = proto.NewResult("true", nil)
+	} else {
+		res = proto.NewError("User has not login")
+	}
+	convertJson(res, w)
+}
+
+func UserselfGet(w http.ResponseWriter, r *http.Request) {
+
+	var res interface{}
+
+	if checkLogin(r) {
+		session, _ := store.Get(r, generalSession())
+		email := session.Values["email"].(string)
+
+		if user, err := proto.GetUser(email); err != nil {
+			res = proto.NewError("GetUSer err")
+		} else {
+			res, _ = proto.NewResult("true", *user)
+		}
+	} else {
+		res = proto.NewError("User has not login")
+	}
+
+	var js []byte
+	js, _ = json.Marshal(res)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
 	"net/http"
@@ -23,11 +24,20 @@ func checkLogin(r *http.Request) bool {
 
 }
 
+func convertJson(input interface{}, w http.ResponseWriter) {
+	var js []byte
+	js, _ = json.Marshal(input)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
+}
+
 func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/signup", SignupPost).Methods("POST")
 	router.HandleFunc("/login", LoginPost).Methods("POST")
+	router.HandleFunc("/logout", Logout).Methods("GET")
+	router.HandleFunc("/getuser", UserselfGet).Methods("GET")
 
 	http.Handle("/", router)
 	err := http.ListenAndServe(":8080", router)
